@@ -16,7 +16,6 @@ class Game
 {
     public static void Main()
     {
-        // new comment
         bool exit = false;
         string? input;
 
