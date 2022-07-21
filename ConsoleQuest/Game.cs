@@ -8,7 +8,6 @@
  * 4. Создать линейный сюжет с последующим переходом на нелинейность.
  * 5. Сделать систему сохранений и загрузки игры.
  * 6. Настроить корректный размер окна и отображение текста в консоли.
- * 7. (!!! СРОЧНО !!!) ПЕРЕПИСАТЬ БЛОК С IF () ТАК, ЧТОБЫ ВВОД СИМВОЛОВ ВЫЗЫВАЛСЯ ОДИН РАЗ (input == "1") or (input == "2"), А НЕ (input == "1"), затем (input == "2").
  */
 using ConsoleQuest;
 
@@ -16,7 +15,6 @@ class Game
 {
     public static void Main()
     {
-        // new comment
         bool exit = false;
         string? input;
 
@@ -41,71 +39,10 @@ class Game
                               "2. Попытаться открыть решетку.");
             Console.Write("> ");
 
-            /*switch (display.Input())
-            {
-                case "1":
-                    Console.WriteLine("Вы нашли ключ.\n" + 
-                                      "1. Попробовать открыть решетку найденным ключом.");
-                    Console.Write("> ");
-
-                    switch (display.Input())
-                    {
-                        case "1":
-                            Console.WriteLine("\nРешетка открыта.\n");
-                            display.NextLevel();
-                            display.Loading();
-
-                            Console.WriteLine("Выйдя из своей камеры, Вы столкнулись со стражником тюрьмы. Ваши действия?\n" +
-                                              "1. Попытаться обойти стражника незаметно.\n" +
-                                              "2. Вступить в бой со стражником.");
-                            Console.Write("> ");
-
-                            switch (display.Input())
-                            {
-                                case "1":
-                                    Console.WriteLine("\nПока невнимательный стражник доедал свой обед, смакуя кусок курятины за ветхим столом, Вы проскочили мимо его поста к выходу из подземелья.\n");
-                                    // NextLevel();
-                                    // Loading();
-                                    display.EndDemo();      // конец игры
-                                    display.Exit();
-                                    exit = true;            // выход из игры (выход из цикла while)
-                                    break;
-
-                                case "2":
-                                    Console.WriteLine("\nВы, возомнив себя героем сказок, которые в детстве Вам рассказывал отец, с голыми кулаками вступили в бой против стражника, " +
-                                                      "вооруженного коротким ржавым мечом, что и стало главной ошибкой. На этом история существование Вашей бренной души окончилась . . .\n");
-                                    display.EndDemo();      // конец игры
-                                    display.Exit();
-                                    exit = true;            // выход из игры (выход из цикла while)
-                                    break;
-
-                                default:
-                                    Console.WriteLine("\nВыберите корректное действие!\n");
-                                    break;
-                            }
-
-                            break;
-
-                        default:
-                            Console.WriteLine("\nВыберите корректное действие!\n");
-                            break;
-                    }
-
-                    break;
-
-                case "2":
-                    Console.WriteLine("\nРешетка закрыта. Попробуйте найти ключ\n");
-                    break;
-
-                default:
-                    Console.WriteLine("\nВыберите корректное действие!\n");
-                    break;
-            }*/ // логика игры на switch
-
             input = display.Input();
             if (input == "1")
             {
-                Console.WriteLine("Вы нашли ключ.\n" +
+                Console.WriteLine("\nВы нашли ключ.\n" +
                                   "1. Попробовать открыть решетку найденным ключом.");
                 Console.Write("> ");
 
