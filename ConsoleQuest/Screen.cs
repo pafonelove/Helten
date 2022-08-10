@@ -50,6 +50,32 @@ namespace ConsoleQuest
             Console.Clear();
         }
 
+        // Метод для отрисовки рамки на стартовом экране (в будущем требуется сделать произвольный размер рамки по горизонтали и вертикали).
+        public void DrawBorder(int rows, int cols)
+        {
+            for (int i = 0; i < rows; i++)
+            {
+                Console.Write("#");
+                
+                for (int j = 0; j < cols; j++)
+                {
+                    if ((i == 0) || (i == rows - 1))
+                    {
+                        Console.Write("#");
+                    }
+                    else
+                    {
+                        Console.Write(" ");
+                    }
+
+                }
+
+                Console.Write("#");
+
+                Console.WriteLine();
+            }
+        }
+
         // Метод отображения экрана перехода на новый уровень.
         public void NextLevel()
         {
