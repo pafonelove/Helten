@@ -1,22 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleQuest
+namespace GameScreen
 {
-    // Класс Screen отвечает за ввод/вывод симоволов с клавиатуры на экран
-    class Screen
+    // Класс Screen отвечает за ввод/вывод симоволов с клавиатуры на экран.
+    public class Screen
     {
         // Метод ввода с клавиатуры.
-        public string? Input() => Console.ReadLine();
+        //public string? Input() => Console.ReadLine();
+
+        // Доработанный метод с досрочным закрытием программы через нажатие на клавишу "q".
+        public string? Input()
+        {
+            string? str = Console.ReadLine();
+            if ((str == "R") || (str == "r"))
+                Process.GetCurrentProcess().Kill();
+            if (str == "2023")
+                Console.WriteLine("Вы открыли пасхалку!");
+            return str;
+        }
 
         // Метод отображения начального экрана.
-        public void Greeting()
+        public void GreetingScreen()
         {
             Console.WriteLine("Добро пожаловать в игру \"ConsoleQuest v 0.1!\"");  // окно приглашения в игру
-            Console.Write("Желаете запустить игру? [Д/Н]: ");
+            Console.Write("Желаете начать игру? [Д/Н]: ");
         }
 
         // Метод отображения сюжета видеоигры.
@@ -34,8 +46,11 @@ namespace ConsoleQuest
             Input();
         }
 
+        // Метод отображения экрана перезапуска игры.
+        public void RestartScreen() => Console.Write("Желаете начать игру заново? [Д/Н]: ");
+
         // Метод отображения экрана выхода.
-        public void Exit() => Console.WriteLine("\nВыход из игры . . .\n");
+        public void ExitScreen() => Console.WriteLine("\nВыход из игры . . .\n");
 
         // Метод имитации загрузочного экрана.
         public void Loading()
@@ -50,13 +65,13 @@ namespace ConsoleQuest
             Console.Clear();
         }
 
-        // Метод для отрисовки рамки на стартовом экране (в будущем требуется сделать произвольный размер рамки по горизонтали и вертикали).
+        // ДОРАБОТАТЬ!!! // Метод для отрисовки рамки на стартовом экране (в будущем требуется сделать произвольный размер рамки по горизонтали и вертикали).
         public void DrawBorder(int rows, int cols)
         {
             for (int i = 0; i < rows; i++)
             {
                 Console.Write("#");
-                
+
                 for (int j = 0; j < cols; j++)
                 {
                     if ((i == 0) || (i == rows - 1))
@@ -82,6 +97,12 @@ namespace ConsoleQuest
             Console.WriteLine("Вы перешли на следующий уровень. Нажмите любую клавишу для продолжения . . .\n");
             Console.ReadKey();
         }
+
+        // Метод отображения предложения сохранить игру.
+        public void SaveScreen() => Console.Write("Вы хотите сохранить игру? [Д/Н]: ");
+
+        // Метод отображения предложения загрузить игру.
+        public void LoadScreen() => Console.Write("Вы хотите загрузить игру? [Д/Н]: ");
 
         // Метод вывода текста завершения демо игры.
         public void EndDemo()
