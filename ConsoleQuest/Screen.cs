@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 
 namespace GameScreen
 {
@@ -19,8 +14,14 @@ namespace GameScreen
             string? str = Console.ReadLine();
             if ((str == "R") || (str == "r"))
                 Process.GetCurrentProcess().Kill();
-            if (str == "2023")
+            // Пасхальное яйцо.
+            if (str == "2023") 
+            {
                 Console.WriteLine("Вы открыли пасхалку!");
+                Console.WriteLine("Нажмите любую кнопку для выхода из инвентаря . . .");
+                Console.ReadKey();
+            }
+                
             return str;
         }
 
@@ -91,6 +92,65 @@ namespace GameScreen
             }
         }
 
+        // Метод отрисовки названия локации.
+        public void LocationName(string locationName)
+        {
+            switch (locationName)
+            {
+                case "Dungeon":
+                    Console.WriteLine();
+                    Console.WriteLine("========================================================================================================================");
+                    Console.WriteLine("============================================= Л О К А Ц И Я \"П Е Щ Е Р А\" ==============================================");
+                    Console.WriteLine("========================================================================================================================");
+                    break;
+                case "Village":
+                    Console.WriteLine();
+                    Console.WriteLine("========================================================================================================================");
+                    Console.WriteLine("============================================= Л О К А Ц И Я \"Д Е Р Е В Н Я\" ============================================");
+                    Console.WriteLine("========================================================================================================================");
+                    break;
+
+                case "Market":
+                    Console.WriteLine();
+                    Console.WriteLine("=======================================================================================================================");
+                    Console.WriteLine("============================================== Л О К А Ц И Я \"Р Ы Н О К\" ==============================================");
+                    Console.WriteLine("=======================================================================================================================");
+                    break;
+
+                case "Road":
+                    Console.WriteLine();
+                    Console.WriteLine("========================================================================================================================");
+                    Console.WriteLine("============================================= Л О К А Ц И Я \"Д О Р О Г А\" ==============================================");
+                    Console.WriteLine("========================================================================================================================");
+                    break;
+
+                case "BlacksmithHouse":
+                    Console.WriteLine();
+                    Console.WriteLine("========================================================================================================================");
+                    Console.WriteLine("======================================== Л О К А Ц И Я \"Д О М    К У З Н Е Ц А\" ========================================");
+                    Console.WriteLine("========================================================================================================================");
+                    break;
+
+                case "DoctorHouse":
+                    Console.WriteLine();
+                    Console.WriteLine("========================================================================================================================");
+                    Console.WriteLine("======================================== Л О К А Ц И Я \"Д О М    Л Е К А Р Я\" ==========================================");
+                    Console.WriteLine("========================================================================================================================");
+                    break;
+
+                case "BattleZone":
+                    Console.WriteLine();
+                    Console.WriteLine("========================================================================================================================");
+                    Console.WriteLine("================================================= А Р Е Н А   Б И Т В Ы ================================================");
+                    Console.WriteLine("========================================================================================================================");
+                    break;
+
+                default:
+                    break;
+            }
+            
+        }
+
         // Метод отображения экрана перехода на новый уровень.
         public void NextLevel()
         {
@@ -109,6 +169,109 @@ namespace GameScreen
         {
             Console.WriteLine("Конец демонстрационной версии игры. Нажмите любую клавишу для продолжения . . .\n");
             Console.ReadKey();
+        }
+
+        // Метод отрисовки "шапки" инвентаря.
+        public void DrawInventory()
+        {
+            Console.WriteLine();
+            Console.WriteLine("[========] [========] [========] [========] [========]");
+            Console.Write("[========] [====]  ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write("И Н В Е Н Т А Р Ь");
+            Console.ResetColor();
+            Console.WriteLine(" [====] [========]");
+            Console.WriteLine("[========] [========] [========] [========] [========]");
+        }
+
+        // Метод отображения занятого пространства в инвентаре героя.
+        public void DrawInventoryCapacity(int invCapacity, int takenSpace)
+        {
+            if (takenSpace == 0)                                    // если инвентарь пустой
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Слотов заполнено: {takenSpace}/{invCapacity}");
+                Console.ResetColor();
+            }
+
+            if ((takenSpace > 0) && (takenSpace < invCapacity))     // если инвентарь заполнен, но не полностью
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine($"Слотов заполнено: {takenSpace}/{invCapacity}");
+                Console.ResetColor();
+                Console.WriteLine();
+            }
+
+            if (takenSpace == invCapacity)                          // если инвентарь заполнен
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Слотов заполнено: {takenSpace}/{invCapacity}");
+                Console.ResetColor();
+                Console.WriteLine();
+            }
+        }
+
+        // Метод - сообщение о том, что инвентарь пуст.
+        public void DrawInventoryIsEmpty()
+        {
+            Console.WriteLine();
+            for (int i = 0; i < 10; i++)
+            {
+                Console.Write("#");
+            }
+            Console.WriteLine();
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Инвентарь пуст!");
+            Console.ResetColor();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Console.Write("#");
+            }
+            Console.WriteLine();
+        }
+
+        // Метод - сообщение о том, что инвентарь заполнен.
+        public void DrawInventoryIsFull()
+        {
+            Console.WriteLine();
+            for (int i = 0; i < 10; i++)
+            {
+                Console.Write("#");
+            }
+            Console.WriteLine();
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Инвентарь заполнен!");
+            Console.ResetColor();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Console.Write("#");
+            }
+            Console.WriteLine();
+        }
+
+        // Метод - сообщение о том, что товар в магазине отсутствует.
+        public void DrawItemIsOut()
+        {
+            Console.WriteLine();
+            for (int i = 0; i < 10; i++)
+            {
+                Console.Write("X");
+            }
+            Console.WriteLine();
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Товар отсутствует!");
+            Console.ResetColor();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Console.Write("X");
+            }
+            Console.WriteLine();
         }
     }
 }

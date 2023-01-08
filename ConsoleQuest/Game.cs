@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using GameScreen;
-using System.Data;
+﻿using GameScreen;
+using PlayerSpace;
+using EnemySpace;
 
 namespace GameSpace
 {
@@ -15,12 +8,15 @@ namespace GameSpace
     public class Game
     {
         static Screen display = new();              // экземпляр класса Screen, отвечающий за отображение текста и системных сообщений на экране
-        static string? input;                       // переменная для ввода текста с клавиатуры
-        static string? itemName;                    // переменная для взаимодействия с инвентарем
-        static string[] inventory = new string[10]; // определение размера инвентаря (размер инвентаря = размер массива string)
-        public static bool exit = false;            // глобальная переменная для выхода из бесконечного цикла while (завершение игры)
-        static string savePoint;                    // переменная, сохраняющая в себе название текущей локации (имя текущего метода)
-        
+        static Player player = new();
+        static Enemy enemy = new();
+
+        static string? input;                       // поле класса для ввода текста с клавиатуры
+        // static string? itemName;                    // поле класса для взаимодействия с инвентарем
+
+        public static bool exit = false;            // глобальное поле класса для выхода из бесконечного цикла while (завершение игры)
+        // static string savePoint;                    // поле класса, сохраняющее в себе название текущей локации (имя текущего метода)
+
         // Метод отображения стартового экрана.
         public static void NewGame()
         {
@@ -49,7 +45,9 @@ namespace GameSpace
 
 
         // Метод запуска игры.
-        public static void StartGame() => Cave();
+        //public static void StartGame() => Dungeon();
+
+        public static void StartGame() => Dungeon();
 
         // Метод для выбора повторной игры или закрытия программы.
         public static void RestartGame()
@@ -61,7 +59,7 @@ namespace GameSpace
                 input = display.Input();
                 if (input == "Д" || input == "д" || input == "Y" || input == "y")       // если пользователь согласился сыграть еще раз, то вызывается метод StartGame, отвечающий за запуск игры
                 {
-                    Array.Clear(inventory);                                             // обнуление инвентаря после перезапуска (очищение массива от элементов)
+                    Array.Clear(player.Inventory);                                       // обнуление инвентаря после перезапуска (очищение массива от элементов)
                     StartGame();
                 }
 
@@ -84,7 +82,7 @@ namespace GameSpace
         {
             while (true)
             {
-                Console.WriteLine("1. Cave.\n" +
+                Console.WriteLine("1. Dungeon.\n" +
                                   "2. Village.\n" +
                                   "3. Market.\n" +
                                   "4. Road.\n" +
@@ -97,7 +95,7 @@ namespace GameSpace
                 switch (input)
                 {
                     case "1":
-                        Cave();
+                        Dungeon();
                         break;
                     case "2":
                         Village();
@@ -121,13 +119,81 @@ namespace GameSpace
             }
         }
 
-        // Описанме инструкций игры в локации "Пещера Петит-Равин".
-        public static void Cave()
+        //Тестовая локация.
+        public static void TestLoc()
         {
+            Console.SetCursorPosition(0, Console.BufferHeight-1);
+            Console.WriteLine(Console.BufferWidth + " " + Console.BufferHeight);
+            
+            Console.ReadKey();
+            Console.Clear();
+        }
+
+        // Арена битвы.
+        static void BattleZone()
+        {
+            while (true)
+            {
+                Console.Clear();
+                display.LocationName("BattleZone");
+                bool battleFlag = false;
+                Console.WriteLine($"Перед вами враг - {enemy.Name}\n" +
+                                  "1. Начать бой.\n" +
+                                  "2. Сбежать.\n" +
+                                  "3. Показать инвентарь.");
+
+                Console.Write("> ");
+
+                input = display.Input();
+                if (input == "1")
+                {
+                    while (true)
+                    {
+                        player.Battle(out battleFlag);
+                        Console.ReadKey();
+                        if (battleFlag)
+                        { 
+                            Console.Clear();
+                            return;
+                        }
+                    }
+                }
+
+                else if (input == "2")
+                {
+                    Console.WriteLine("\nВы сбежали с поля боя и остались живы.");
+                    Console.ReadKey();
+                    Console.Clear();
+                    exit = true;
+                    return;
+                }
+
+                else if (input == "3")
+                {
+                    player.ShowInventory(player.Inventory, player.ItemsCount);
+                    Console.WriteLine("Нажмите любую кнопку для выхода из инвентаря . . .");
+                    Console.ReadKey();
+                }
+
+                else
+                {
+                    Console.WriteLine("\nВыберите корректное действие!\n");
+                }
+            }
+        }
+
+        // Описанме инструкций игры в локации "Пещера Петит-Равин".
+        public static void Dungeon()
+        {
+
             // display.Loading();      // вызов загрузочного экрана
             while (true)
             {
-                Console.WriteLine("\nВы стоите перед входом в пещеру Петит-Равин. Слева и справа тупик, сзади – дорога в деревню Шик-Шагок, в которой есть местный лекарь, торговцы оружием и провизией и кузнец.\n" +
+                Console.Clear();
+                if (SpawnEnemy())
+                    BattleZone();
+                display.LocationName("Dungeon");
+                Console.WriteLine("Вы стоите перед входом в пещеру Петит-Равин. Слева и справа тупик, сзади – дорога в деревню Шик-Шагок, в которой есть местный лекарь, торговцы оружием и провизией и кузнец.\n" +
                                   "1. Отправиться в пещеру.\n" +
                                   "2. Развернуться и пойти в деревню.\n" +
                                   "3. Показать инвентарь.");
@@ -139,10 +205,10 @@ namespace GameSpace
                 {
                     Console.WriteLine("\nВы отправились в пещеру . . .\n");
                     display.EndDemo();      // вызов экрана с текстом об окончании демоверсии
-                    display.LoadScreen();
-                    input = display.Input();
-                    if (input == "Д" || input == "д" || input == "Y" || input == "y")
-                        LoadGame();
+                    //display.LoadScreen();
+                    //input = display.Input();
+                    //if (input == "Д" || input == "д" || input == "Y" || input == "y")
+                    //    // LoadGame();
 
                     exit = true;            // выход из бесконечного цикла
                     return;
@@ -155,7 +221,9 @@ namespace GameSpace
 
                 else if (input == "3")
                 {
-                    ShowInventory();
+                    player.ShowInventory(player.Inventory, player.ItemsCount);
+                    Console.WriteLine("Нажмите любую кнопку для выхода из инвентаря . . .");
+                    Console.ReadKey();
                 }
 
                 else
@@ -171,7 +239,9 @@ namespace GameSpace
             // display.Loading();
             while (true)
             {
-                Console.WriteLine("\nВы вошли в деревню Кватре Котес. Поселение выглядит ухоженным, дома и постройки выполнены в классическом стиле, присущем средневековым колонистам-французам.\n" +
+                Console.Clear();
+                display.LocationName("Village");
+                Console.WriteLine("Вы вошли в деревню Кватре Котес. Поселение выглядит ухоженным, дома и постройки выполнены в классическом стиле, присущем средневековым колонистам-французам.\n" +
                                   "Прямо по дороге видно кузню и дом лекаря. Слева от ворот в деревню находится рынок.\n" +
                                   "1. Пойти прямо по дороге.\n" +
                                   "2. Свернуть налево в сторону рынка.\n" +
@@ -197,7 +267,9 @@ namespace GameSpace
 
                 else if (input == "4")
                 {
-                    ShowInventory();
+                    player.ShowInventory(player.Inventory, player.ItemsCount);
+                    Console.WriteLine("Нажмите любую кнопку для выхода из инвентаря . . .");
+                    Console.ReadKey();
                 }
 
                 else
@@ -220,7 +292,11 @@ namespace GameSpace
                 //    SaveGame();
                 //    Console.WriteLine(savePoint);
                 //}
-                Console.WriteLine("\nСледуя за незнакомой женщиной преклонного возраста, Вы вышли на сельскую площадь, на которой располагалась местная ярмарка.\n" +
+                Console.Clear();
+                if (SpawnEnemy())
+                    BattleZone();
+                display.LocationName("Market");
+                Console.WriteLine("Следуя за незнакомой женщиной преклонного возраста, Вы вышли на сельскую площадь, на которой располагалась местная ярмарка.\n" +
                                   "1. Купить провизию.\n" +
                                   "2. Вернуться к воротам деревни.\n" +
                                   "3. Показать инвентарь.");
@@ -229,45 +305,46 @@ namespace GameSpace
                 input = display.Input();
                 if (input == "1")
                 {
-                    while (true)
+                    bool flag = true;   // переменная-флаг для произвольного выхода из магазина (при нажатии на "Q"
+                                        // прекращается выполнение бесконечного цикла)
+                    while (flag)
                     {
                         Console.WriteLine("\nЧто вы хотите купить из еды?");
-                        ShowTraderInventory(traderFood);
-                        Console.WriteLine("Q - выход из магазина.");
+                        ShowTraderInventory(traderFood, traderFoodItemsCount);
+                        Console.WriteLine("\nQ - выход из магазина.");
 
                         Console.Write("> ");
 
                         input = display.Input();
                         while (true)
                         {
-                            
+
                             if (input == "1")
                             {
-                                Console.WriteLine($"\nВы купили {traderFood[Convert.ToInt32(input) - 1]}.");
-                                AddToInventory(inventory, traderFood[0]);
-                                DeleteFromTraderInventory(traderFood, traderFood[0], Convert.ToInt32(input) - 1);
+                                //Console.WriteLine($"\nВы купили {traderFood[Convert.ToInt32(input) - 1]}.");
+                                AddToInventory(player.Inventory, traderFood, player.ItemsCount, Convert.ToInt32(input) - 1);
+                                DeleteFromTraderInventory(traderFood, traderFoodItemsCount, Convert.ToInt32(input) - 1);
                                 break;
                             }
 
                             else if (input == "2")
                             {
-                                Console.WriteLine($"\nВы купили {traderFood[Convert.ToInt32(input) - 1]}.");
-                                AddToInventory(inventory, traderFood[1]);
-                                DeleteFromTraderInventory(traderFood, traderFood[1], Convert.ToInt32(input) - 1);
+                                AddToInventory(player.Inventory, traderFood, player.ItemsCount, Convert.ToInt32(input) - 1);
+                                DeleteFromTraderInventory(traderFood, traderFoodItemsCount, Convert.ToInt32(input) - 1);
                                 break;
                             }
 
                             else if (input == "3")
                             {
-                                Console.WriteLine($"\nВы купили {traderFood[Convert.ToInt32(input) - 1]}.");
-                                AddToInventory(inventory, traderFood[2]);
-                                DeleteFromTraderInventory(traderFood, traderFood[2], Convert.ToInt32(input) - 1);
+                                AddToInventory(player.Inventory, traderFood, player.ItemsCount, Convert.ToInt32(input) - 1);
+                                DeleteFromTraderInventory(traderFood, traderFoodItemsCount, Convert.ToInt32(input) - 1);
                                 break;
                             }
 
                             else if ((input == "Q") || (input == "q"))
                             {
-                                return;
+                                flag = false;   // выход из магазина (прерывание бесконечного цикла)
+                                break;
                             }
 
                             else
@@ -289,7 +366,9 @@ namespace GameSpace
 
                 else if (input == "3")
                 {
-                    ShowInventory();
+                    player.ShowInventory(player.Inventory, player.ItemsCount);
+                    Console.WriteLine("Нажмите любую кнопку для выхода из инвентаря . . .");
+                    Console.ReadKey();
                 }
 
                 else
@@ -305,7 +384,9 @@ namespace GameSpace
             // display.Loading();
             while (true)
             {
-                Console.WriteLine("\nВы находитесь на дорожной развилке рядом с указателем: «Дом кузнеца <==== || ====> Дом лекаря».\n" +
+                Console.Clear();
+                display.LocationName("Road");
+                Console.WriteLine("Вы находитесь на дорожной развилке рядом с указателем: «Дом кузнеца <==== || ====> Дом лекаря».\n" +
                                   "1. Войти в дом кузнеца.\n" +
                                   "2. Войти в дом лекаря.\n" +
                                   "3. Вернуться к воротам деревни.\n" +
@@ -331,7 +412,9 @@ namespace GameSpace
 
                 else if (input == "4")
                 {
-                    ShowInventory();
+                    player.ShowInventory(player.Inventory, player.ItemsCount);
+                    Console.WriteLine("Нажмите любую кнопку для выхода из инвентаря . . .");
+                    Console.ReadKey();
                 }
 
                 else
@@ -347,7 +430,9 @@ namespace GameSpace
             // display.Loading();
             while (true)
             {
-                Console.WriteLine("\nВнутри Вас встретил местный кузнец по имени Леонард - взрослый, крепкий и высокий мужчина с длинной угольной бородой, - держащий в правой руке \n" +
+                Console.Clear();
+                display.LocationName("BlacksmithHouse");
+                Console.WriteLine("Внутри Вас встретил местный кузнец по имени Леонард - взрослый, крепкий и высокий мужчина с длинной угольной бородой, - держащий в правой руке \n" +
                                     "молот и в левой - лезвие для заготовки клинка.\n" +
                                     "- Добро пожаловать в мои скромные владения, хе-хе, - проговорил басовитым голосом кузнец. - Чего желаете?\n" +
                                   "1. Купить оружие.\n" +
@@ -361,11 +446,12 @@ namespace GameSpace
                 input = display.Input();
                 if (input == "1")
                 {
-                    while (true)
+                    bool flag = true;
+                    while (flag)
                     {
                         Console.WriteLine("\nЧто вы хотите купить из оружия?");
-                        ShowTraderInventory(traderWeapons);
-                        Console.WriteLine("Q - выход из магазина.");
+                        ShowTraderInventory(traderWeapons, traderWeaponsItemsCount);
+                        Console.WriteLine("\nQ - выход из магазина.");
 
                         Console.Write("> ");
 
@@ -374,31 +460,29 @@ namespace GameSpace
                         {
                             if (input == "1")
                             {
-                                Console.WriteLine($"\nВы купили {traderWeapons[Convert.ToInt32(input) - 1]}.");
-                                AddToInventory(inventory, traderWeapons[0]);
-                                DeleteFromTraderInventory(traderWeapons, traderWeapons[0], Convert.ToInt32(input) - 1);
+                                AddToInventory(player.Inventory, traderWeapons, player.ItemsCount, Convert.ToInt32(input) - 1);
+                                DeleteFromTraderInventory(traderWeapons, traderWeaponsItemsCount, Convert.ToInt32(input) - 1);
                                 break;
                             }
 
                             else if (input == "2")
                             {
-                                Console.WriteLine($"\nВы купили {traderWeapons[Convert.ToInt32(input) - 1]}.");
-                                AddToInventory(inventory, traderWeapons[1]);
-                                DeleteFromTraderInventory(traderWeapons, traderWeapons[1], Convert.ToInt32(input) - 1);
+                                AddToInventory(player.Inventory, traderWeapons, player.ItemsCount, Convert.ToInt32(input) - 1);
+                                DeleteFromTraderInventory(traderWeapons, traderWeaponsItemsCount, Convert.ToInt32(input) - 1);
                                 break;
                             }
 
                             else if (input == "3")
                             {
-                                Console.WriteLine($"\nВы купили {traderWeapons[Convert.ToInt32(input) - 1]}.");
-                                AddToInventory(inventory, traderWeapons[2]);
-                                DeleteFromTraderInventory(traderWeapons, traderWeapons[2], Convert.ToInt32(input) - 1);
+                                AddToInventory(player.Inventory, traderWeapons, player.ItemsCount, Convert.ToInt32(input) - 1);
+                                DeleteFromTraderInventory(traderWeapons, traderWeaponsItemsCount, Convert.ToInt32(input) - 1);
                                 break;
                             }
 
                             else if ((input == "Q") || (input == "q"))
                             {
-                                return;
+                                flag = false;
+                                break;
                             }
 
                             else
@@ -412,11 +496,12 @@ namespace GameSpace
 
                 else if (input == "2")
                 {
-                    while (true)
+                    bool flag = true;
+                    while (flag)
                     {
                         Console.WriteLine("\nЧто вы хотите купить из брони?");
-                        ShowTraderInventory(traderArmor);
-                        Console.WriteLine("Q - выход из магазина.");
+                        ShowTraderInventory(traderArmor, traderArmorItemsCount);
+                        Console.WriteLine("\nQ - выход из магазина.");
 
                         Console.Write("> ");
 
@@ -425,31 +510,29 @@ namespace GameSpace
                         {
                             if (input == "1")
                             {
-                                Console.WriteLine($"\nВы купили {traderArmor[Convert.ToInt32(input) - 1]}.");
-                                AddToInventory(inventory, traderArmor[0]);
-                                DeleteFromTraderInventory(traderArmor, traderArmor[0], Convert.ToInt32(input) - 1);
+                                AddToInventory(player.Inventory, traderArmor, player.ItemsCount, Convert.ToInt32(input) - 1);
+                                DeleteFromTraderInventory(traderArmor, traderArmorItemsCount, Convert.ToInt32(input) - 1);
                                 break;
                             }
 
                             else if (input == "2")
                             {
-                                Console.WriteLine($"\nВы купили {traderArmor[Convert.ToInt32(input) - 1]}.");
-                                AddToInventory(inventory, traderArmor[1]);
-                                DeleteFromTraderInventory(traderArmor, traderArmor[1], Convert.ToInt32(input) - 1);
+                                AddToInventory(player.Inventory, traderArmor, player.ItemsCount, Convert.ToInt32(input) - 1);
+                                DeleteFromTraderInventory(traderArmor, traderArmorItemsCount, Convert.ToInt32(input) - 1);
                                 break;
                             }
 
                             else if (input == "3")
                             {
-                                Console.WriteLine($"\nВы купили {traderArmor[Convert.ToInt32(input) - 1]}.");
-                                AddToInventory(inventory, traderArmor[2]);
-                                DeleteFromTraderInventory(traderArmor, traderArmor[2], Convert.ToInt32(input) - 1);
+                                AddToInventory(player.Inventory, traderArmor, player.ItemsCount, Convert.ToInt32(input) - 1);
+                                DeleteFromTraderInventory(traderArmor, traderArmorItemsCount, Convert.ToInt32(input) - 1);
                                 break;
                             }
 
                             else if ((input == "Q") || (input == "q"))
                             {
-                                return;
+                                flag = false;
+                                break;
                             }
 
                             else
@@ -464,6 +547,8 @@ namespace GameSpace
                 else if (input == "3")
                 {
                     Console.WriteLine("\nЛеонард рассказал Вам слухи, которые окутали пещеру.");
+                    Console.WriteLine("Нажмите любую кнопку для продолжения . . .");
+                    Console.ReadKey();
                 }
 
                 else if (input == "4")
@@ -473,7 +558,9 @@ namespace GameSpace
 
                 else if (input == "5")
                 {
-                    ShowInventory();
+                    player.ShowInventory(player.Inventory, player.ItemsCount);
+                    Console.WriteLine("Нажмите любую кнопку для выхода из инвентаря . . .");
+                    Console.ReadKey();
                 }
 
                 else
@@ -489,7 +576,9 @@ namespace GameSpace
             // display.Loading();
             while (true)
             {
-                Console.WriteLine("\nВ одноэтажном здании с выкрашенными травяными красителями зелеными стенами - что было сделано для создания атмосферы умиротворения и \n" +
+                Console.Clear();
+                display.LocationName("DoctorHouse");
+                Console.WriteLine("В одноэтажном здании с выкрашенными травяными красителями зелеными стенами - что было сделано для создания атмосферы умиротворения и \n" +
                                 "полного спокойствия - Вы увидели угловатую деревянную стойку с разными сосудами, за которой на кресле-качалке располагался старец \n" +
                                 "преклонного возраста - судя по всему, местный лекарь.\n" +
                                 "- Слушаю тебя, путник-незнакомец, - отозвался старый врач. - Хочешь подлечиться или купить лекарства?\n" +
@@ -505,15 +594,18 @@ namespace GameSpace
                 if (input == "1")
                 {
                     Console.WriteLine("\nВы излечили все ранения.");
+                    Console.WriteLine("Нажмите любую кнопку для продолжения . . .");
+                    Console.ReadKey();
                 }
 
                 else if (input == "2")
                 {
-                    while (true)
+                    bool flag = true;
+                    while (flag)
                     {
                         Console.WriteLine("\nЧто вы хотите купить из травяных настоек?");
-                        ShowTraderInventory(traderPotions);
-                        Console.WriteLine("Q - выход из магазина.");
+                        ShowTraderInventory(traderPotions, traderPotionsItemsCount);
+                        Console.WriteLine("\nQ - выход из магазина.");
 
                         Console.Write("> ");
 
@@ -522,31 +614,29 @@ namespace GameSpace
                         {
                             if (input == "1")
                             {
-                                Console.WriteLine($"\nВы купили {traderPotions[Convert.ToInt32(input) - 1]}.");
-                                AddToInventory(inventory, traderPotions[0]);
-                                DeleteFromTraderInventory(traderPotions, traderPotions[0], Convert.ToInt32(input) - 1);
+                                AddToInventory(player.Inventory, traderPotions, player.ItemsCount, Convert.ToInt32(input) - 1);
+                                DeleteFromTraderInventory(traderPotions, traderPotionsItemsCount, Convert.ToInt32(input) - 1);
                                 break;
                             }
 
                             else if (input == "2")
                             {
-                                Console.WriteLine($"\nВы купили {traderPotions[Convert.ToInt32(input) - 1]}.");
-                                AddToInventory(inventory, traderPotions[1]);
-                                DeleteFromTraderInventory(traderPotions, traderPotions[1], Convert.ToInt32(input) - 1);
+                                AddToInventory(player.Inventory, traderPotions, player.ItemsCount, Convert.ToInt32(input) - 1);
+                                DeleteFromTraderInventory(traderPotions, traderPotionsItemsCount, Convert.ToInt32(input) - 1);
                                 break;
                             }
 
                             else if (input == "3")
                             {
-                                Console.WriteLine($"\nВы купили {traderPotions[Convert.ToInt32(input) - 1]}.");
-                                AddToInventory(inventory, traderPotions[2]);
-                                DeleteFromTraderInventory(traderPotions, traderPotions[2], Convert.ToInt32(input) - 1);
+                                AddToInventory(player.Inventory, traderPotions, player.ItemsCount, Convert.ToInt32(input) - 1);
+                                DeleteFromTraderInventory(traderPotions, traderPotionsItemsCount, Convert.ToInt32(input) - 1);
                                 break;
                             }
 
                             else if ((input == "Q") || (input == "q"))
                             {
-                                return;
+                                flag = false;
+                                break;
                             }
 
                             else
@@ -561,6 +651,8 @@ namespace GameSpace
                 else if (input == "3")
                 {
                     Console.WriteLine("\nЛекарь рассказал Вам всё, что знает о пещере.");
+                    Console.WriteLine("Нажмите любую кнопку для продолжения . . .");
+                    Console.ReadKey();
                 }
 
                 else if (input == "4")
@@ -570,7 +662,9 @@ namespace GameSpace
 
                 else if (input == "5")
                 {
-                    ShowInventory();
+                    player.ShowInventory(player.Inventory, player.ItemsCount);
+                    Console.WriteLine("Нажмите любую кнопку для выхода из инвентаря . . .");
+                    Console.ReadKey();
                 }
 
                 else
@@ -580,133 +674,165 @@ namespace GameSpace
             }
         }
 
-        static string[] traderWeapons = { "Железный меч", "Железный топор", "Железный кинжал" };
-        static string[] traderArmor = { "Железный шлем", "Железный нагрудник", "Железный щит" };
+        // Массивы - списки товаров у каждого из продавцов.
         static string[] traderFood = { "Хлеб", "Кувшин молока", "Жареная говядина" };
+        static int[] traderFoodItemsCount = { 3, 4, 5 };
+
+        static string[] traderWeapons = { "Железный меч", "Железный топор", "Железный кинжал" };
+        static int[] traderWeaponsItemsCount = { 4, 6, 7 };
+
+        static string[] traderArmor = { "Железный шлем", "Железный нагрудник", "Железный щит" };
+        static int[] traderArmorItemsCount = { 8, 9, 10 };
+
+        //static string[] formatTraderFoodInv = FormattingTraderInventory(traderFood);
+
         static string[] traderPotions = { "Малое зелье лечения", "Зелье лечения", "Большое зелье лечения" };
+        static int[] traderPotionsItemsCount = { 11, 12, 13 };
 
         // Метод отображения содержимого инвентаря торговца.
-        static void ShowTraderInventory(string[] traderInventory)
+        static void ShowTraderInventory(string[] traderInventory, int[] traderItemsCount)
         {
             Console.WriteLine();
             for (int i = 0, j = 1; i < traderInventory.Length; i++, j++)
             {
-                if (traderInventory[0] is null)
-                {
-                    Console.WriteLine("У торговца закончились товары!");
-                    return;
+                if (traderItemsCount[i] <= 0) {
+                    if (traderInventory[0] is null)
+                    {
+                        Console.WriteLine("У торговца закончились товары!");
+                        return;
+                    }
+
+                    if (traderInventory[i] is null)
+                        return;
                 }
 
-                if (traderInventory[i] is null)
-                    return;
-
-                Console.WriteLine($"{j}. {traderInventory[i]}");
+                Console.WriteLine($"{j}. {traderInventory[i]} - x{traderItemsCount[i]} шт.");
             }
-
-            Console.WriteLine();
         }
 
         // Метод удаления купленного товара из инвентаря торговца.
-        static void DeleteFromTraderInventory(string[] traderInventory, string? item, int choice)
+        static void DeleteFromTraderInventory(string[] traderInventory, int[] traderItemsCount, int choice)
         {
-            for (int i = choice; i < traderInventory.Length; i++)
-            {
-                if (i >= traderInventory.Length - 1)
-                {
-                    traderInventory[i] = null;
-                    break;
-                }
+            // Если инвентарь игрока переполнен, то выполнение метода прерывается (количество предметов в инвентаре продавца не уменьшается).
+            if (fullFlag)
+                return;
 
-                traderInventory[i] = traderInventory[++i];
-                --i;
+            int j = choice;
+            traderItemsCount[j]--;
+
+            if (traderItemsCount[j] <= 0)                           // если кончился товар, то
+            {
+                for (int i = choice; i < traderInventory.Length; i++)
+                {
+                    if (i >= traderInventory.Length - 1)            // если позиция была последней в списке, то
+                    {
+                        traderInventory[i] = null;                      // позиция удаляется,
+                        traderItemsCount[i] = 0;                        // количество обнуляется,
+                        if (traderItemsCount[i] == 0) {
+                            break;                                      // выход из цикла
+                        }
+                    }
+
+                    traderInventory[i] = traderInventory[++i];      // название товара смещается на позицию выше 
+                    --i;
+
+
+                    traderItemsCount[i] = traderItemsCount[++i];    // количество товара смещается на позицию выше
+                    --i;
+
+                    if (i >= traderItemsCount.Length - 1)
+                    {
+                        break;
+                    }
+                }
             }
         }
 
-        // Метод отображения содержимого инвентаря.
-        static void ShowInventory()
-        {
-            Console.WriteLine();
-            for (int i = 0; i < 10; i++)
-            {
-                Console.Write("#");
-            }
-            Console.WriteLine();
-
-            for (int i = 0, j = 1; i < inventory.Length; i++, j++)
-            {
-                if (inventory[0] is null)
-                {
-                    Console.WriteLine("Инвентарь пуст!");
-                    break;
-                }
-
-                if (inventory[i] is null)
-                    break;
-
-                Console.WriteLine($"{j}. {inventory[i]}");
-            }
-
-            for (int i = 0; i < 10; i++)
-            {
-                Console.Write("#");
-            }
-            Console.WriteLine();
-
-            return;
-        }
+        // Поле класса - флаг для обозначения переполнения инвентаря игрока.
+        static bool fullFlag = false;
 
         // Метод добавления предмета в инвентарь.
-        static void AddToInventory(string[] inventory, string itemName)
+        static void AddToInventory(string[] plrInventory, string[] traderInventory, int[] plrItemsCount, int choice)
         {
-            for (int i = 0; i < inventory.Length; i++)
+            // Вместимость инвентаря.
+            int capacity = player.ItemsCount.Length;
+
+            // Общее количество вещей, находящихся в инвентаре игрока.
+            int sum = 0;
+            for (int i = 0; i < player.ItemsCount.Length; i++)
             {
-                if (inventory[i] is null)
+                sum += player.ItemsCount[i];
+            }
+
+            int j = choice;
+
+            if (traderInventory[j] is null)               // если товар в магазине отсутствует,
+                                                            // то выводится сообщение и прерывается выполнение метода
+            {
+                display.DrawItemIsOut();
+                return;
+            }
+
+            if (sum >= capacity)                         // если сумка переполнена, то
+            {
+                display.DrawInventoryIsFull();              // сообщение о переполнении
+                fullFlag = true;
+                return;
+            }
+
+            if (traderInventory[j] is not null)            // если товар в магазине в наличии, то происходит покупка
+            {
+                Console.WriteLine($"\nВы купили {traderInventory[j]}.");
+            } 
+
+            for (int i = 0; i < plrInventory.Length; i++)
+            {
+                if (plrInventory[i] is null)                // если место в сумке свободно, то
                 {
-                    inventory[i] = itemName;
+                    plrInventory[i] = traderInventory[j];       // присваивается название предмета,
+                    plrItemsCount[i]++;                         // увеличивается количестве на 1
+
                     return;
                 }
 
-                if (inventory[inventory.Length - 1] != null)
+                if (plrInventory[i] == traderInventory[j])  // если такой предмет уже есть в сумке, то
                 {
-                    InventoryIsFull();
+                    plrItemsCount[i]++;                         // увеличивается только количество на 1
                     return;
                 }
+
+                
             }
 
             Console.WriteLine();
         }
 
-        // Метод сообщения о заполненном инвентаре.
-        static void InventoryIsFull()
+        // Метод случайной генерации врагов.
+        static public bool SpawnEnemy()
         {
-            Console.WriteLine();
-            for (int i = 0; i < 10; i++)
+            int dice = 0;
+            Random rnd = new();
+            dice = rnd.Next(0, 3);
+            if (dice == 1)
             {
-                Console.Write("#");
+                return true;
             }
-            Console.WriteLine();
 
-            Console.WriteLine("Инвентарь заполнен!");
-
-            for (int i = 0; i < 10; i++)
-            {
-                Console.Write("#");
-            }
-            Console.WriteLine();
+            return false;
         }
 
-        // Метод сохранения игры (!!! ДОРАБОТАТЬ !!!).
-        static void SaveGame([CallerMemberName] string? callerMemberName = null)
-        {
-            savePoint = callerMemberName;
-        }
+        //// Метод сохранения игры (!!! ДОРАБОТАТЬ !!!).
+        //static void SaveGame([CallerMemberName] string? callerMemberName = null)
+        //{
+        //    savePoint = callerMemberName;
+        //}
 
-        // Метод загрузки игры (!!! ДОРАБОТАТЬ !!!).
-        static void LoadGame()
-        {
-            Game currentLocation = new Game();
-            MethodInfo m = currentLocation.GetType().GetMethod(savePoint);
-            m.Invoke(currentLocation, null);
-        }
+        //// Метод загрузки игры (!!! ДОРАБОТАТЬ !!!).
+        //static void LoadGame()
+        //{
+        //    Game currentLocation = new Game();
+        //    MethodInfo m = currentLocation.GetType().GetMethod(savePoint);
+        //    m.Invoke(currentLocation, null);
+        //}
     }
 }
