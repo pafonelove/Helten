@@ -137,8 +137,8 @@ namespace GameSpace
                 Console.Clear();
                 display.LocationName("BattleZone");
                 bool battleFlag = false;
-                Console.WriteLine($"Перед вами враг - {enemy.Name}\n" +
-                                  "1. Начать бой.\n" +
+                Console.WriteLine($"Перед вами враг - {enemy.Name}");
+                Console.WriteLine("1. Начать бой.\n" +
                                   "2. Сбежать.\n" +
                                   "3. Показать инвентарь.");
 

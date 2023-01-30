@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using EnemySpace;
+using PlayerSpace;
+using System.Diagnostics;
 
 namespace GameScreen
 {
@@ -91,6 +93,8 @@ namespace GameScreen
                 Console.WriteLine();
             }
         }
+
+        
 
         // Метод отрисовки названия локации.
         public void LocationName(string locationName)

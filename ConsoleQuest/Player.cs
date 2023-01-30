@@ -5,10 +5,12 @@ namespace PlayerSpace
 {
     internal class Player
     {
-        public string name = "Unknown Hero";
-        public string Name { get => name; set => value = name; }
+        string name = "Unknown Hero";
         int hp = 50;
         int damage = 15;
+        public string Name { get => name; set => value = name; }
+        public int HP { get => hp; set => value = hp; }
+        public int Damage{ get => damage; set => value = damage; }
 
         public string[] Inventory = new string[10]; // определение размера инвентаря (размер инвентаря = размер массива string)
         public int[] ItemsCount = new int[10];
@@ -69,8 +71,9 @@ namespace PlayerSpace
         public void Battle(out bool battleFlag)
         {
             battleFlag = false;
-
-            if (enemy.hp <= 0)
+            Console.WriteLine();
+            DrawHud();
+            if (enemy.HP <= 0)
             {
                 Console.WriteLine("\nВы победили врага!");
                 battleFlag = true;
@@ -93,24 +96,77 @@ namespace PlayerSpace
             if (dice == 0)
             {
                 Console.WriteLine("\nВраг увернулся - Вы промахнулись!");
+                Console.WriteLine("===================================");
             }
 
             if (dice == 1)
             {
                 Console.WriteLine($"\nВы нанесли врагу {damage} урона!");
-                enemy.hp -= damage;
+                Console.WriteLine("===================================");
+                enemy.HP = damage;
             }
 
             if (dice == 2)
             {
                 Console.WriteLine("\nВраг промахнулся - Вы увернулись!");
+                Console.WriteLine("===================================");
             }
 
             if (dice == 3)
             {
-                Console.WriteLine($"\n{enemy.Name} нанёс Вам {enemy.damage} урона!");
-                hp -= enemy.damage;
+                Console.WriteLine($"\n{enemy.Name} нанёс Вам {enemy.Damage} урона!");
+                Console.WriteLine("===================================");
+                hp -= enemy.Damage;
             }
+        }
+
+        public void DrawHud()
+        
+        {
+            Console.Write($"Hero HP: ");
+            
+            // Цвет индикатора здоровья Игрока.
+            if (hp > 25)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write(hp);
+                Console.ResetColor();
+            } 
+            else if ((hp <= 25) && (hp > 10))
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write(hp);
+                Console.ResetColor();
+            } 
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write(hp);
+                Console.ResetColor();
+            }
+
+            Console.Write("\t\tEnemy HP: ");
+            // Цвет индикатора здоровья Врага.
+            if (enemy.HP > 15)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write(enemy.HP);
+                Console.ResetColor();
+            }
+            else if ((enemy.HP <= 15) && (enemy.HP > 5))
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write(enemy.HP);
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write(enemy.HP);
+                Console.ResetColor();
+            }
+
+            Console.WriteLine();
         }
     }
 }

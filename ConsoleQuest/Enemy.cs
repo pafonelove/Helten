@@ -2,10 +2,13 @@
 {
     internal class Enemy
     {
-        public string name = "Orc";
-        public string Name { get => name; set => name = value; }
-        public int hp = 30;
-        public int damage = 10;
+        string name = "Orc";
+        int hp = 30;
+        int damage = 10;
+        //public int damageTaken;
+        public string Name { get => name; set => value = name; }
+        public int HP { get => hp; set => hp -= value; }
+        public int Damage { get => damage;}
 
         public int Respawn() => hp = 30;
     }
