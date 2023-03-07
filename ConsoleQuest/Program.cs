@@ -15,29 +15,58 @@
  * 11. Сделать отображение одинаковых предметов в инвентаре количественно (x2, x3, x4, ...). (+++ DONE +++)
  * 12. Поработать над входом в пещеру после деревни (Cave => Village => Cave) - не срабатывает метод RestartGame. (!!!) (+++ DONE +++)
  * 13. Переписать корректный текст из Actions.txt в проект. (!!!) (+++ DONE +++)
- * 14. Сделать воспроизведение MP3-файлов в консоли.
+ * 14. Сделать воспроизведение MP3-файлов (WAV) в консоли. (!!!) (+++ DONE +++)   
  * 15. Сделать так, чтобы игрок оставался в меню закупа, а не выходил из него автоматически. (+++ DONE +++)
  * 16. Сделать метод удаления купленного Игроком предмета из инвентаря продавца (купил Хлеб - он пропал из меню покупки). (+++ DONE +++)\
  * 17. Написать правильное отображение HUD'а + попробовать написать HUD внизу области экрана (HP, MP, dmg, etc)
  */
 
+using ConsoleQuest;
+using System.Windows;
+using System.Drawing;
 using GameSpace;
+using System.Runtime.InteropServices;
+using ConsoleHelper;
 
 class Program
 {
+    // Method for set screen and buffer size.
+    public static void SetScreen()
+    {
+        // Setting up screen resolution.
+        //Console.SetWindowSize(Console.LargestWindowWidth - 20, Console.LargestWindowHeight - 15);
+
+        // Setting up text buffer with scroll line.
+        Console.SetBufferSize(Console.LargestWindowWidth - 20, Console.LargestWindowHeight - 20);
+
+        // Setting up basic coordinates.
+        //Console.WindowTop = 0;
+        //Console.WindowLeft = 0;
+
+        // Setting up window title.
+        Console.Title = "My Game";
+
+        // Setting up font size.
+        //ConsoleHelper.SetCurrentFont("Consolas", 10);
+
+        //Console.SetWindowPosition(150, 50);
+        //Console.SetWindowSize(160, 45); // default console window size    // 240x63 - max size for 1920x1080
+    }
+
+    // Main method.
     public static void Main()
     {
-        
         // Запуск игры (бесконечного цикла).
         while (!Game.exit)
         {
-            Console.SetWindowSize(160, 40); // предварительная установка размера окна консоли
-            Console.SetBufferSize(160, 40);
             //NewGame();
             //if (exit)
             //    return;
-            // ChooseLocation();    // выбор любой локации, с которой игрок хочет начать свой путь
-            Game.StartGame();    // старт с первой локации
+            // ChooseLocation();    // choose location for start program
+            //Console.WindowHeight = Console.LargestWindowHeight;
+            //Console.WindowWidth = Console.LargestWindowWidth;
+            SetScreen();
+            Game.StartGame();    // start program
             if (Game.exit)
                 Game.RestartGame();
         }
