@@ -1,0 +1,76 @@
+Location 1 "Cave":
+You are standing in front of the entrance to the Petit Ravin Cave.
+To the left and right is a dead end, behind is the road to the village of Shik-Shagok, in
+which has a local doctor, arms and provisions dealers and a blacksmith.
+
+1. Go to the cave.
+2. Turn around and go to the village.
+3. Show inventory.
+
+///////////////////////////
+
+Location 2 "Village":
+You have entered the village of Quatre Kotes. The settlement looks well-groomed,
+houses and buildings are made in the classical style inherent in
+medieval French colonists.
+Right on the road you can see the smithy and the doctor's house. To the left of the gate to the village is the market.
+
+1. Go straight down the road.
+2. Turn left towards the market.
+3. Exit the gates of the village and go to the cave.
+4. Show inventory.
+
+///////////////////////////
+
+Location 3 "Market":
+Following an unfamiliar woman of advanced age,
+You came to the village square where the
+local fair.
+
+1. Buy provisions.
+2. Return to the gates of the village.
+3. Show inventory.
+
+///////////////////////////
+
+Location 4 "Crossroad":
+You are at a fork in the road next to
+pointer: "Blacksmith's house <==== || ====> Doctor's house".
+
+1. Enter the blacksmith's house.
+2. Enter the doctor's house.
+3. Return to the gates of the village.
+4. Show inventory.
+
+///////////////////////////
+
+Location 5 "Blacksmith":
+Inside you were met by a local blacksmith named Leonard - an adult,
+a strong and tall man with a long charcoal beard, holding in
+a hammer in the right hand and a blade for blanking the blade in the left.
+
+“Welcome to my humble domain, hehe,” he said in a deep voice.
+blacksmith voice. - What do you want?
+
+1. Buy weapons.
+2. Buy armor.
+3. Get information about Petit Ravin Cave.
+4. Go outside.
+5. Show inventory.
+
+///////////////////////////
+
+Location 6 "Doctor":
+In a one-story building with grass-dyed green
+walls - what was done to create an atmosphere of peace and
+complete tranquility - you saw an angular wooden rack with various vessels,
+behind which, on a rocking chair, was an old man of advanced age -
+apparently a local doctor.
+
+- I hear you, stranger traveler, - the old doctor replied. - Do you want to get medical treatment or buy medicines?
+
+1. Heal wounds.
+2. Buy herbal tinctures.
+3. Get information about Petit Ravin Cave.
+4. Go outside.
+5. Show inventory.
