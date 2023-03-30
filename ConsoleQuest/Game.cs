@@ -19,7 +19,7 @@ namespace GameSpace
         // static string? itemName;                    // class field for interact with inventory
 
         public static bool exit = false;            // global class field for exit from infinite while cycle (game over)
-        static string savePoint;                    // class field for contain current location name (current method name)
+        static string? savePoint = @"n/a";                    // class field for contain current location name (current method name)
         public static bool languageFlag = false;    // language flag for choosing english language in game
         // Method for show start screen.
         //public static void NewGame()
@@ -53,10 +53,11 @@ namespace GameSpace
 
         public static void StartGame()
         {
-            //Console.Clear();
+            Console.Clear();
+            
             display.GreetingScreen();   // display main screen and logo
-            display.Localization();
-            string input = display.Input();
+            display.Localization();     // display language choice
+            string? input = display.Input();
             if (input == "1")
             {
                 languageFlag = true;
@@ -66,25 +67,28 @@ namespace GameSpace
                 display.Control();          // display game control
 
             display.Loading();          // display loading process
-
             ShowLore();                 // display game lore
 
             Audio.PlayMusic();          // play music
-            if (languageFlag)
+            if (languageFlag)           // if english language was chosen,
+                                        // then using inventory with english titles
             {
                 traderFood = traderFood_En;
                 traderWeapons = traderWeapons_En;
                 traderArmor = traderArmor_En;
                 traderPotions = traderPotions_En;
             }
+
             Cave();                     // start from first location
         }
         
+        // Display game lore method.
         public static void ShowLore()
         {
             Audio.PlayMusic();
             display.Lore();
         }
+
         // Game restart method + exit from game method.
         public static void RestartGame()
         {
@@ -93,7 +97,7 @@ namespace GameSpace
                 display.RestartScreen();                                                // call restart game sreen
 
                 input = display.Input();
-                if (input.ToUpper() == "Д" || input.ToUpper() == "Y")      // if player want to start game again, then call StartGame method
+                if (input?.ToUpper() == "Д" || input?.ToUpper() == "Y")      // if player want to start game again, then call StartGame method
                 {
                     Array.Clear(player.Inventory);                                       // clear inventory after restart (array cleaning)
                     //StartGame();
@@ -102,9 +106,10 @@ namespace GameSpace
                     Environment.Exit(0);                                                            // kill current work process
                 }
 
-                else if (input.ToUpper() == "Н" || input.ToUpper() == "N")  // else game is end
+                else if (input?.ToUpper() == "Н" || input?.ToUpper() == "N")  // else game is end
                 {
                     display.ExitScreen();
+                    Thread.Sleep(3000);
                     exit = true;
                     Environment.Exit(0);
                 }
@@ -128,7 +133,7 @@ namespace GameSpace
                                   "5. Blacksmith.\n" +
                                   "6. Doctor.");
 
-                Console.Write("    > ");
+                display.Cursor();
 
                 input = display.Input();
                 switch (input)
@@ -171,7 +176,7 @@ namespace GameSpace
         // Battle area.
         static void BattleZone([CallerMemberName] string? callerMemberName = null)  // callerMemberName is using for saving method name, which called BattleZone method
         {
-            string prevLoc = callerMemberName;  // save location name, which started battle
+            string? prevLoc = callerMemberName;  // save location name, which started battle
             Audio.PlayMusic(); // play music
             while (true)
             {
@@ -401,7 +406,7 @@ namespace GameSpace
                                 break;
                             }
 
-                            else if (input.ToUpper() == "Q")
+                            else if (input?.ToUpper() == "Q")
                             {
                                 flag = false;   // exit from shop (end of infinite cycle)
                                 break;
@@ -528,7 +533,7 @@ namespace GameSpace
                                 break;
                             }
 
-                            else if (input.ToUpper() == "Q")
+                            else if (input?.ToUpper() == "Q")
                             {
                                 flag = false;
                                 break;
@@ -578,7 +583,7 @@ namespace GameSpace
                                 break;
                             }
 
-                            else if (input.ToUpper() == "Q")
+                            else if (input?.ToUpper() == "Q")
                             {
                                 flag = false;
                                 break;
@@ -692,7 +697,7 @@ namespace GameSpace
                                 break;
                             }
 
-                            else if (input.ToUpper() == "Q")
+                            else if (input?.ToUpper() == "Q")
                             {
                                 flag = false;
                                 break;
@@ -943,8 +948,8 @@ namespace GameSpace
         static void LoadGame()
         {
             Game currentLocation = new Game();
-            MethodInfo m = currentLocation.GetType().GetMethod(savePoint);
-            m.Invoke(currentLocation, null);
+            MethodInfo? m = currentLocation.GetType().GetMethod(savePoint);
+            m?.Invoke(currentLocation, null);
         }
     }
 }

@@ -34,14 +34,18 @@ class Program
     public static void SetScreen()
     {
         // Setting up screen resolution.
-        //Console.SetWindowSize(Console.LargestWindowWidth - 20, Console.LargestWindowHeight - 15);
+        Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
+        
 
         // Setting up text buffer with scroll line.
-        Console.SetBufferSize(Console.LargestWindowWidth - 20, Console.LargestWindowHeight - 20);
+        // Console.SetBufferSize(Console.LargestWindowWidth - 20, Console.LargestWindowHeight - 20); // for 1920x1080
+        Console.SetBufferSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
+        // Console.SetBufferSize(150, 30);
+        // Console.SetWindowSize(160, 40);
 
         // Setting up basic coordinates.
-        //Console.WindowTop = 0;
-        //Console.WindowLeft = 0;
+        Console.WindowTop = 0;
+        Console.WindowLeft = 0;
 
         // Setting up window title.
         Console.Title = "My Game";
@@ -51,20 +55,18 @@ class Program
 
         //Console.SetWindowPosition(150, 50);
         //Console.SetWindowSize(160, 45); // default console window size    // 240x63 - max size for 1920x1080
+                                                                            // 170x44 - max size for 1366x768
     }
 
     // Main method.
     public static void Main()
     {
-        // Запуск игры (бесконечного цикла).
+        // Launch game (infinite cycle).
         while (!Game.exit)
         {
-            //NewGame();
-            //if (exit)
-            //    return;
             // ChooseLocation();    // choose location for start program
-            //Console.WindowHeight = Console.LargestWindowHeight;
-            //Console.WindowWidth = Console.LargestWindowWidth;
+            
+            Console.Clear();
             SetScreen();
             Game.StartGame();    // start program
             if (Game.exit)

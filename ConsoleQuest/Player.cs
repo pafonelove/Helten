@@ -116,7 +116,7 @@ namespace PlayerSpace
             Console.WriteLine("\n");
 
             // If inventory is not empty player can use item from inventory.
-            string input;
+            string? input;
             while (true)
             {
                 if (Game.languageFlag)
@@ -124,7 +124,7 @@ namespace PlayerSpace
                 else
                     Console.Write("    Введите номер предмета, который хотите использовать (Q - прервать выбор предметов): ");
                 input = display.Input();
-                if (input.ToUpper() == "Q")
+                if (input?.ToUpper() == "Q")
                     return;
 
                 try

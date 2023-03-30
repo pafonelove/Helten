@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace ConsoleQuest
 {
     internal class Audio
@@ -18,7 +19,7 @@ namespace ConsoleQuest
         // Play music method.
         public static void PlayMusic([CallerMemberName] string? callerMemberName = null) // callerMemberName is using for saving method name, which called PlayMusic method
         {
-            string location = callerMemberName; // save location name, wherein need to play music
+            string? location = callerMemberName; // save location name, wherein need to play music
             string folder = "audio/";
             if (location == "BattleZone")
             {
@@ -47,7 +48,7 @@ namespace ConsoleQuest
             }
         }
 
-        public static void PlaySFX(string? sfx)
+        public static void PlaySFX(string sfx)
         {
             string folder = "audio/";
             if (sfx.ToLower() == "victory")
@@ -63,7 +64,7 @@ namespace ConsoleQuest
         }
 
         // Stop music method.
-        public static void Stop(string location)
+        public static void Stop(string? location)
         {
             string folder = "audio/";
             player.Stop();

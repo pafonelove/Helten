@@ -228,8 +228,8 @@ namespace GameScreen
                 Console.Write("    Skip lore? [Y/N]: ");
             else
                 Console.Write("    Пропустить историю? [Y/N]: ");
-            string input = Input();
-            if (input.ToUpper() == "Д" || input.ToUpper() == "Y")
+            string? input = Input();
+            if (input?.ToUpper() == "Д" || input?.ToUpper() == "Y")
             {
                 return;
             }
@@ -404,6 +404,15 @@ namespace GameScreen
             Console.ResetColor();
             Console.WriteLine(" [====] [========]");
             Console.WriteLine("    [========] [========] [========] [========] [========]");
+            
+            string path = @"txt/avatar.txt";    // path to file, from which read avatar symbol by symbol
+            IEnumerable<string> strings;        // IEnumerable collection for string reading            
+            Console.WriteLine();
+            strings = File.ReadLines(path).Skip(1).Take(24);    // read file (skip - from which string start, take - how many string read)
+            foreach (string s in strings)   // display location name on screen symbol by symbol
+            {
+                Console.WriteLine(s);
+            }
         }
 
         // Display occupied space in inventory method.
