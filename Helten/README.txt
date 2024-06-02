@@ -8,7 +8,7 @@ Before starting the game, open it in full screen mode (Alt + Enter).
 Contol is carried out by entering a specific number and pressing the Enter key. If no number is shown on the screen, you must press the Enter key to continue.
 
 /// Bugs, errors ///
-The game is currently under active development and has demo version 0.0.1 (alpha) for Windows OS. A Linux version is on the way.
+The game is currently under active development and has demo version 0.1.0 (alpha) for Windows OS. A Linux version is on the way.
 If you find any bugs, please report them to one of the following resources:
 - Game Jolt game page;
 - e-mail (indicated in contacts);
@@ -41,7 +41,7 @@ Helten — это текстовая консольная ролевая игр�
 Управление осуществляется вводом определенного числа и нажатием клавиши Enter. Если на экране не отображается номер, для продолжения необходимо нажать клавишу Enter.
 
 /// Баги, ошибки ///
-В настоящее время игра находится в активной разработке и имеет демо-версию 0.0.1 (альфа) на ОС Windows. Версия для Linux - в планах.
+В настоящее время игра находится в активной разработке и имеет демо-версию 0.1.0 (альфа) на ОС Windows. Версия для Linux - в планах.
 Если вы обнаружите какие-либо ошибки, сообщите о них на один из следующих ресурсов:
 - страница игры Game Jolt;
 - электронная почта (указана в контактах);

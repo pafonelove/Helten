@@ -42,6 +42,7 @@ class Program
         Console.SetBufferSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
         // Console.SetBufferSize(150, 30);
         // Console.SetWindowSize(160, 40);
+        // test comment
 
         // Setting up basic coordinates.
         Console.WindowTop = 0;
